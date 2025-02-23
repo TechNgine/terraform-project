@@ -9,7 +9,7 @@ variable "key_name" {
 }
 
 variable "instance_type" { 
-    description = "instance type for ec2" 
+    description = "instance type for ec2"
     default     =  "t2.medium" 
 }
 
@@ -19,10 +19,14 @@ variable "security_group" {
 }
 
 variable "tag_name" { 
-    description = "Tag Name of for Ec2 instance" 
+    description = "Tag Name of for Ec2 instance"
     default     = "terraform-ec2" 
 } 
 variable "ami_id" { 
-    description = "AMI for Ubuntu Ec2 instance" 
+    description = "AMI for Ec2 instance" 
     default     = "ami-0893df1bd754c3189" 
+}
+variable "instance_count" {
+  description = "Number of EC2 instances to create"
+  type        = number
 }
