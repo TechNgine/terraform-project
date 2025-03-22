@@ -5,7 +5,7 @@ variable "aws_region" {
 
 variable "key_name" { 
     description = " SSH keys to connect to ec2 instance" 
-    default     =  "springclasskey"
+    default     =  "Mytfkey"
 }
 
 variable "instance_type" { 
@@ -20,7 +20,7 @@ variable "security_group" {
 
 variable "tag_name" { 
     description = "Tag Name of for Ec2 instance" 
-    default     = "terraform-ec2" 
+    default     = "Ikechukwu-ec2" 
 } 
 variable "ami_id" { 
     description = "AMI for Ubuntu Ec2 instance" 
