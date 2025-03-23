@@ -27,6 +27,12 @@ pipeline {
                 }
             }
         }
+        stage('Debug Checkout') {
+            steps {
+                sh 'pwd'
+                sh 'ls -lah'
+            }
+        }
 
         stage('Terraform Plan') {
             when {
