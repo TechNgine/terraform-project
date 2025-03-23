@@ -1,0 +1,67 @@
+pipeline {
+    agent any
+
+    parameters {
+        choice(name: 'TAG_NAME', choices: ['Server_dev', 'Server_test', 'Server_prod'], description: 'Select the Tag Name for the EC2 instance')
+        choice(name: 'TERRAFORM_ACTION', choices: ['init & plan', 'apply', 'destroy'], description: 'Select Terraform action')
+        choice(name: 'INSTANCE_COUNT', choices: ['1', '2', '3', '4', '5'], description: 'Select the number of my EC2 instances')
+    }
+
+    environment {
+        AWS_REGION = 'us-east-1'
+        TF_WORKING_DIR = 'ec2'
+        TF_VAR_tag_name = "${params.TAG_NAME}"
+        TF_VAR_instance_count = "${params.INSTANCE_COUNT}"
+    }
+
+    stages {
+        // stage('Checkout') {
+        //     steps {
+        //         git branch: 'main', url: 'https://github.com/your-repo.git'
+        //     }
+        // }
+
+        stage('Terraform Init & Plan') {
+            when {
+                expression { params.TERRAFORM_ACTION == 'init & plan' }
+            }
+            steps {
+                dir("${TF_WORKING_DIR}") {
+                    sh 'terraform init'
+                    sh 'terraform plan -out=tfplan -var="tag_name=${TF_VAR_tag_name}" -var="instance_count=${TF_VAR_instance_count}"'
+                }
+            }
+        }
+
+        stage('Terraform Apply') {
+            when {
+                expression { params.TERRAFORM_ACTION == 'apply' }
+            }
+            steps {
+                dir("${TF_WORKING_DIR}") {
+                    sh 'terraform init'
+                    sh 'terraform plan -out=tfplan -var="tag_name=${TF_VAR_tag_name}" -var="instance_count=${TF_VAR_instance_count}"'
+                    sh 'terraform apply -auto-approve tfplan'
+                }
+            }
+        }
+
+        stage('Terraform Destroy') {
+            when {
+                expression { params.TERRAFORM_ACTION == 'destroy' }
+            }
+            steps {
+                dir("${TF_WORKING_DIR}") {
+                    sh 'terraform init'
+                    sh 'terraform destroy -auto-approve -var="tag_name=${TF_VAR_tag_name}" -var="instance_count=${TF_VAR_instance_count}"'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Terraform process completed!'
+        }
+    }
+}

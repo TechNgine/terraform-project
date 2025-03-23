@@ -1,37 +1,53 @@
 variable "aws_region" {
-       description = "The AWS region to create things in." 
-       default     = "us-east-1" 
+    description = "The AWS region to create things in." 
+    type        = string
+    default     = "us-east-1"
 }
 
 variable "key_name" { 
-    description = " SSH keys to connect to ec2 instance" 
-    default     =  "springclasskey"
+    description = "SSH key name to connect to EC2 instance" 
+    type        = string
+    default     = "jenkins-key"
 }
 
 variable "instance_type" { 
-    description = "instance type for ec2"
-    default     =  "t2.medium" 
+    description = "Instance type for EC2" 
+    type        = string
+    default     = "t2.medium"
 }
 
 variable "security_group" { 
-    description = "Name of security group" 
-    default     = "new-terraform-sg" 
+    description = "Name of the security group" 
+    type        = string
+    default     = "new-terraform-sg"
 }
 
 variable "tag_name" { 
-    description = "Tag Name of for Ec2 instance"
-    default     = "terraform-ec2" 
-} 
+    description = "Tag name for the EC2 instance" 
+    type        = string
+}
+
 variable "ami_id" { 
-<<<<<<< HEAD
-    description = "AMI for Ubuntu Ec2 instance" 
-    default     = "ami-0e1bed4f06a3b463d" 
-=======
-    description = "AMI for Ec2 instance" 
-    default     = "ami-0893df1bd754c3189" 
->>>>>>> dennis-branch
+    description = "AMI for Ubuntu EC2 instance" 
+    type        = string
+    default     = "ami-0e1bed4f06a3b463d"
 }
-variable "instance_count" {
-  description = "Number of EC2 instances to create"
-  type        = number
+
+variable "instance_count" { 
+    description = "Number of EC2 instances to create" 
+    type        = number
+    default     = 5
 }
+
+variable "vpc_cidr" {
+    description = "CIDR block for the VPC"
+    type        = string
+    default     = "172.31.0.0/16"
+}
+
+variable "allowed_ips" {
+    description = "List of allowed IPs for RDP access"
+    type        = list(string)
+    default     = ["0.0.0.0/0"]  # Change this to your real IP for security
+}
+
