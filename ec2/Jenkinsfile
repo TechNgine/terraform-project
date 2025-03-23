@@ -7,7 +7,7 @@ pipeline {
 
     environment {
         AWS_REGION = 'us-east-1'
-        TF_WORKING_DIR = 'terraform-project/ec2/'
+        TF_WORKING_DIR = 'ec2'
     }
 
     stages {
@@ -39,7 +39,7 @@ pipeline {
                 expression { params.TERRAFORM_ACTION == 'plan' }
             }
             steps {
-                dir('ec2') {
+                 dir("${TF_WORKING_DIR}") {
                     sh 'terraform plan -out=tfplan'
                 }
             }
