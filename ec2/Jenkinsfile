@@ -11,11 +11,11 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'main', url: 'https://github.com/your-repo.git'
-            }
-        }
+        // stage('Checkout') {
+        //     steps {
+        //         git branch: 'main', url: 'https://github.com/your-repo.git'
+        //     }
+        // }
 
         stage('Terraform Init') {
             when {
