@@ -44,7 +44,7 @@ resource "aws_security_group" "new-terraform-sg" {
 }
 
 resource "aws_instance" "terraform-ec2" {
-  count = 7 
+  count = ${count} 
   ami           = var.ami_id
   key_name = var.key_name
   instance_type = var.instance_type
