@@ -43,10 +43,12 @@ pipeline {
                             error "Terraform plan file does not exist. Run the 'plan' stage first."
                         }
                     }
+                    withEnv(["INSTANCE_COUNT=${params.INSTANCE_COUNT}"]) {
                     sh 'terraform apply -auto-approve tfplan'
                 }
             }
         }
+    }
 
         stage('Terraform Destroy') {
             when {
