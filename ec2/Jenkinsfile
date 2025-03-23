@@ -10,47 +10,39 @@ pipeline {
         TF_WORKING_DIR = 'ec2'
     }
 
-    stages {
-        // stage('Checkout') {
-        //     steps {
-        //         git branch: 'main', url: 'https://github.com/your-repo.git'
-        //     }
-        // }
-
-        stage('Terraform Init') {
+            stages {
+                // stage('Checkout') {
+                //     steps {
+                //         git branch: 'main', url: 'https://github.com/your-repo.git'
+                //     }
+                // }
+        
+        stage('Terraform Init & Plan') {
             when {
-                expression { params.TERRAFORM_ACTION == 'init' }
+                expression { params.TERRAFORM_ACTION == 'plan' || params.TERRAFORM_ACTION == 'apply' }
             }
             steps {
                 dir("${TF_WORKING_DIR}") {
                     sh 'terraform init'
-                }
-            }
-        }
-        stage('Debug Checkout') {
-            steps {
-                sh 'pwd'
-                sh 'ls -lah'
-            }
-        }
-
-        stage('Terraform Plan') {
-            when {
-                expression { params.TERRAFORM_ACTION == 'plan' }
-            }
-            steps {
-                 dir("${TF_WORKING_DIR}") {
                     sh 'terraform plan -out=tfplan'
                 }
             }
         }
-
+        
         stage('Terraform Apply') {
             when {
                 expression { params.TERRAFORM_ACTION == 'apply' }
             }
             steps {
                 dir("${TF_WORKING_DIR}") {
+                    script {
+                        if (fileExists("tfplan")) {
+                            echo "Updating existing Terraform plan before applying..."
+                            sh 'terraform plan -out=tfplan'
+                        } else {
+                            error "Terraform plan file does not exist. Run the 'plan' stage first."
+                        }
+                    }
                     sh 'terraform apply -auto-approve tfplan'
                 }
             }
