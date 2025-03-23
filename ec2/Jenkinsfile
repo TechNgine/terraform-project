@@ -39,7 +39,7 @@ pipeline {
                 expression { params.TERRAFORM_ACTION == 'plan' }
             }
             steps {
-                dir('ec2')("${TF_WORKING_DIR}") {
+                dir('ec2') {
                     sh 'terraform plan -out=tfplan'
                 }
             }
