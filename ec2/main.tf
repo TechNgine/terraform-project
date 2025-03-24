@@ -43,14 +43,27 @@ resource "aws_security_group" "new-terraform-sg" {
   }
 }
 
+# Local variable to store instance count letters
+locals {
+  count_letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]
+}
+
 resource "aws_instance" "terraform-ec2" {
-  count = var.INSTANCE_COUNT
+  count         = var.instance_count
   ami           = var.ami_id
-  key_name = var.key_name
+  key_name      = var.key_name
   instance_type = var.instance_type
   vpc_security_group_ids = [aws_security_group.new-terraform-sg.id]
-  tags= {
-    Name = var.tag_name
+  
+  tags = {
+    Name        = "aws-${var.environment}-${var.application}-${count.index < 10 ? local.count_letters[count.index] : format("%d", count.index + 1)}"
+    Application = var.application
+    Environment = var.environment
+    Instance    = count.index < 10 ? local.count_letters[count.index] : format("%d", count.index + 1)
+    ManagedBy   = "terraform"
+    Project     = "aws-${var.environment}-${var.application}"
+    CreatedBy   = "jenkins"
+    CreatedAt   = timestamp()
   }
 }
 
