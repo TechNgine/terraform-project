@@ -2,21 +2,18 @@ pipeline {
     agent any
     
     parameters {
-        choice(
+        string(
             name: 'ENVIRONMENT',
-            choices: ['dev', 'qa', 'prod'],
-            description: 'Select the environment (dev, qa, or prod)'
+            description: 'Environment (dev, qa, or prod)'
         )
         
-        choice(
+        string(
             name: 'APPLICATION',
-            choices: ['java', 'python', 'net'],
-            description: 'Select the application type (java, python, or net)'
+            description: 'Application type (java, python, or net)'
         )
         
         string(
             name: 'INSTANCE_COUNT',
-            defaultValue: '1',
             description: 'Number of instances to create'
         )
     }
