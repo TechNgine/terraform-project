@@ -5,7 +5,7 @@ pipeline {
         choice(name: 'TERRAFORM_ACTION', choices: ['init', 'plan', 'apply', 'destroy'], description: 'Select Terraform action')
         choice(name: 'APPLICATION', choices: ['java', 'python', 'net'], description: 'Select the application type')
         choice(name: 'ENVIRONMENT', choices: ['dev', 'qa', 'prod'], description: 'Select the environment')
-        string(name: 'INSTANCE_COUNT', defaultValue: '1', description: 'Number of instances to create')
+        string(name: 'INSTANCE_COUNT', defaultValue: '1', description: 'Number of instances to create...This is only required for terraform plan')
     }
 
     environment {
