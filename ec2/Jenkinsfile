@@ -9,7 +9,7 @@ pipeline {
     }
 
     environment {
-        AWS_REGION = 'us-east-1'
+        AWS_REGION = 'us-east-1' // ununsed variables
         TF_WORKING_DIR = 'ec2'  // Update this if your Terraform files are in a different directory
     }
 
