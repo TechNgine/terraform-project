@@ -44,7 +44,7 @@ variable "application" {
 variable "instance_count" {
     description = "Number of instances to create"
     type        = number
-    default     = 1
+    default     = ' '
     validation {
         condition     = var.instance_count >= 1
         error_message = "Instance count must be at least 1"
