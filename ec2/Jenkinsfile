@@ -64,15 +64,11 @@ pipeline {
             }
             steps {
                 dir("${TF_WORKING_DIR}") {
-                    sh """
-                        terraform destroy -auto-approve \
-                        // -var="application=${params.APPLICATION}" \
-                        // -var="environment=${params.ENVIRONMENT}" \
-                        // -var="instance_count=${params.INSTANCE_COUNT}"
-                    """
+                    sh 'terraform destroy -auto-approve'
                 }
             }
         }
+
     }
 
     post {
