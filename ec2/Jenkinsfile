@@ -3,32 +3,41 @@ pipeline {
 
     parameters {
         choice(name: 'TERRAFORM_ACTION', choices: ['init', 'plan', 'apply', 'destroy'], description: 'Select Terraform action')
+        choice(name: 'APPLICATION', choices: ['java', 'python', 'net'], description: 'Select the application type')
+        choice(name: 'ENVIRONMENT', choices: ['dev', 'qa', 'prod'], description: 'Select the environment')
+        string(name: 'INSTANCE_COUNT', defaultValue: '1', description: 'Number of instances to create')
     }
 
     environment {
         AWS_REGION = 'us-east-1'
-        TF_WORKING_DIR = 'ec2'
+        TF_WORKING_DIR = 'ec2'  // Update this if your Terraform files are in a different directory
     }
 
-            stages {
-                // stage('Checkout') {
-                //     steps {
-                //         git branch: 'main', url: 'https://github.com/your-repo.git'
-                //     }
-                // }
-        
-        stage('Terraform Init & Plan') {
+    stages {
+        stage('Terraform Init') {
+            steps {
+                dir("${TF_WORKING_DIR}") {
+                    sh 'terraform init'
+                }
+            }
+        }
+
+        stage('Terraform Plan') {
             when {
                 expression { params.TERRAFORM_ACTION == 'plan' || params.TERRAFORM_ACTION == 'apply' }
             }
             steps {
                 dir("${TF_WORKING_DIR}") {
-                    sh 'terraform init'
-                    sh 'terraform plan -out=tfplan'
+                    sh """
+                        terraform plan -out=tfplan \
+                        -var="application=${params.APPLICATION}" \
+                        -var="environment=${params.ENVIRONMENT}" \
+                        -var="instance_count=${params.INSTANCE_COUNT}"
+                    """
                 }
             }
         }
-        
+
         stage('Terraform Apply') {
             when {
                 expression { params.TERRAFORM_ACTION == 'apply' }
@@ -37,18 +46,17 @@ pipeline {
                 dir("${TF_WORKING_DIR}") {
                     script {
                         if (fileExists("tfplan")) {
-                            echo "Updating existing Terraform plan before applying..."
-                            sh 'terraform plan -out=tfplan'
+                            echo "Applying Terraform changes..."
+                            sh """
+                                terraform apply -auto-approve tfplan
+                            """
                         } else {
                             error "Terraform plan file does not exist. Run the 'plan' stage first."
                         }
                     }
-                    withEnv(["INSTANCE_COUNT=${params.INSTANCE_COUNT}"]) {
-                    sh 'terraform apply -auto-approve tfplan'
                 }
             }
         }
-    }
 
         stage('Terraform Destroy') {
             when {
@@ -56,7 +64,12 @@ pipeline {
             }
             steps {
                 dir("${TF_WORKING_DIR}") {
-                    sh 'terraform destroy -auto-approve'
+                    sh """
+                        terraform destroy -auto-approve \
+                        -var="application=${params.APPLICATION}" \
+                        -var="environment=${params.ENVIRONMENT}" \
+                        -var="instance_count=${params.INSTANCE_COUNT}"
+                    """
                 }
             }
         }
