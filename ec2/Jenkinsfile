@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     parameters {
-        choice(name: 'TERRAFORM_ACTION', choices: ['init', 'plan', 'apply', 'destroy'], description: 'Select Terraform action')
+        choice(name: 'TERRAFORM_ACTION', choices: ['init', 'plan', 'apply', 'destroy'], description: 'Select Terraform actions')
         choice(name: 'APPLICATION', choices: ['java', 'python', 'net'], description: 'Select the application type')
         choice(name: 'ENVIRONMENT', choices: ['dev', 'qa', 'prod'], description: 'Select the environment')
         string(name: 'INSTANCE_COUNT', description: 'Number of instances to create...This is only required for terraform plan')
