@@ -10,8 +10,9 @@ resource "aws_vpc" "main" {
 
 #Create security group with firewall rules
 resource "aws_security_group" "new-terraform-sg1" {
-  name        = var.security_group
+  name        = "new-terraform-sg-${random_id.suffix.hex}"
   description = "security group for jenkins"
+  # other configuration
                                         
   ingress {
     from_port   = 8080
@@ -51,4 +52,8 @@ resource "aws_instance" "terraform-ec2" {
   tags= {
     Name = "${var.tag_name}-${count.index + 1}"
   }
+}
+
+resource "random_id" "suffix" {
+  byte_length = 8
 }
