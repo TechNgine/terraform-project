@@ -50,7 +50,14 @@ resource "aws_instance" "terraform-ec2" {
   instance_type = var.instance_type
   vpc_security_group_ids = [aws_security_group.new-terraform-sg1.id]
   tags= {
-    Name = "${var.tag_name}-${count.index + 1}"
+    Name = "aws-${var.environment}-${var.application}-${count.index < 10 ? local.count_letters[count.index] : format("%d", count.index + 1)}"
+    Application = var.application
+    Environment = var.environment
+    Instance    = count.index < 10 ? local.count_letters[count.index] : format("%d", count.index + 1)
+    ManagedBy   = "terraform"
+    Project     = "aws-${var.environment}-${var.application}"
+    CreatedBy   = "jenkins"
+    CreatedAt   = timestamp() 
   }
 }
 
