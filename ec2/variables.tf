@@ -30,3 +30,8 @@ variable "instance_count" {
   description = "Number of EC2 instances to create"
   type        = number
 }
+
+variable "instance_name" {
+  description = "Unique name for each instance"
+  type        = string
+}
