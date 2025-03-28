@@ -2,46 +2,58 @@ pipeline {
     agent any
 
     parameters {
-        choice(name: 'TAG_NAME', choices: ['Server_dev', 'Server_test', 'Server_prod'], description: 'Select the Tag Name for the EC2 instance')
-        choice(name: 'TERRAFORM_ACTION', choices: ['init & plan', 'apply', 'destroy'], description: 'Select Terraform action')
-        choice(name: 'INSTANCE_COUNT', choices: ['1', '2', '3', '4', '5'], description: 'Select the number of my EC2 instances')
+        choice(name: 'TERRAFORM_ACTION', choices: ['init', 'plan', 'apply', 'destroy'], description: 'Select Terraform action')
+        choice(name: 'APPLICATION', choices: ['java', 'python', 'net'], description: 'Select the application type')
+        choice(name: 'ENVIRONMENT', choices: ['dev', 'qa', 'prod'], description: 'Select the environment')
+        string(name: 'INSTANCE_COUNT', description: 'Number of instances to create...This is only required for terraform plan')
     }
 
     environment {
-        AWS_REGION = 'us-east-1'
-        TF_WORKING_DIR = 'ec2'
-        TF_VAR_tag_name = "${params.TAG_NAME}"
-        TF_VAR_instance_count = "${params.INSTANCE_COUNT}"
+        AWS_REGION = 'us-east-1' // ununsed variables
+        TF_WORKING_DIR = 'ec2'  // Update this if your Terraform files are in a different directory
     }
 
     stages {
-        // stage('Checkout') {
-        //     steps {
-        //         git branch: 'main', url: 'https://github.com/your-repo.git'
-        //     }
-        // }
-
-        stage('Terraform Init & Plan') {
-            when {
-                expression { params.TERRAFORM_ACTION == 'init & plan' }
-            }
+        stage('Terraform Init') {
             steps {
                 dir("${TF_WORKING_DIR}") {
                     sh 'terraform init'
-                    sh 'terraform plan -out=tfplan -var="tag_name=${TF_VAR_tag_name}" -var="instance_count=${TF_VAR_instance_count}"'
                 }
             }
         }
 
-        stage('Terraform Apply') {
+        stage('Terraform Plan') {
+            when {
+                expression { params.TERRAFORM_ACTION == 'plan' || params.TERRAFORM_ACTION == 'apply' }
+            }
+            steps {
+                dir("${TF_WORKING_DIR}") {
+                    sh """
+                        terraform plan -out=tfplan \
+                        -var="application=${params.APPLICATION}" \
+                        -var="environment=${params.ENVIRONMENT}" \
+                        -var="instance_count=${params.INSTANCE_COUNT}"
+                    """
+                }
+            }
+        }
+
+        stage('Terraform Plan && Apply') {
             when {
                 expression { params.TERRAFORM_ACTION == 'apply' }
             }
             steps {
                 dir("${TF_WORKING_DIR}") {
-                    sh 'terraform init'
-                    sh 'terraform plan -out=tfplan -var="tag_name=${TF_VAR_tag_name}" -var="instance_count=${TF_VAR_instance_count}"'
-                    sh 'terraform apply -auto-approve tfplan'
+                    script {
+                        if (fileExists("tfplan")) {
+                            echo "Applying Terraform changes..."
+                            sh """
+                                terraform apply -auto-approve tfplan
+                            """
+                        } else {
+                            error "Terraform plan file does not exist. Run the 'plan' stage first."
+                        }
+                    }
                 }
             }
         }
@@ -52,11 +64,15 @@ pipeline {
             }
             steps {
                 dir("${TF_WORKING_DIR}") {
-                    sh 'terraform init'
-                    sh 'terraform destroy -auto-approve -var="tag_name=${TF_VAR_tag_name}" -var="instance_count=${TF_VAR_instance_count}"'
+                    sh """
+                        terraform destroy -auto-approve \
+                        -var="application=${params.APPLICATION}" \
+                        -var="environment=${params.ENVIRONMENT}"
+                    """
                 }
             }
         }
+
     }
 
     post {
