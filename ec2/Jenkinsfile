@@ -15,6 +15,9 @@ pipeline {
 
     stages {
         stage('Terraform Init') {
+            when {
+                expression { params.TERRAFORM_ACTION == 'init' || params.TERRAFORM_ACTION == 'plan' }
+            }
             steps {
                 dir("${TF_WORKING_DIR}") {
                     sh 'terraform init'
