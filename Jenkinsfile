@@ -66,14 +66,16 @@ pipeline {
             }
             steps {
                 dir("${TF_WORKING_DIR}") {
-                    def instance_name = "${params.APPLICATION}-${params.ENVIRONMENT}-${params.INSTANCE_COUNT}"
-                    sh """
-                        terraform destroy -auto-approve \
-                        -var="application=${params.APPLICATION}" \
-                        -var="environment=${params.ENVIRONMENT}" \
-                        -var="instance_count=${params.INSTANCE_COUNT}" \
-                        -var="instance_name=${instance_name}"
-                    """
+                    script {
+                        def instance_name = "${params.APPLICATION}-${params.ENVIRONMENT}-${params.INSTANCE_COUNT}"
+                        sh """
+                            terraform destroy -auto-approve \
+                            -var="application=${params.APPLICATION}" \
+                            -var="environment=${params.ENVIRONMENT}" \
+                            -var="instance_count=${params.INSTANCE_COUNT}" \
+                            -var="instance_name=${instance_name}"
+                        """
+                    }
                 }
             }
         }
