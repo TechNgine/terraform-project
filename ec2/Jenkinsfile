@@ -74,7 +74,8 @@ pipeline {
                     sh """
                         terraform destroy -auto-approve \
                         -var="application=${params.APPLICATION}" \
-                        -var="environment=${params.ENVIRONMENT}"
+                        -var="environment=${params.ENVIRONMENT}" \
+                        -var="instance_count=${params.INSTANCE_COUNT}"
                     """
                 }
             }
