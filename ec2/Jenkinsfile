@@ -24,19 +24,23 @@ pipeline {
 
         stage('Terraform Plan') {
             when {
-                expression { params.TERRAFORM_ACTION == 'plan' || params.TERRAFORM_ACTION == 'apply' }
+                expression { params.TERRAFORM_ACTION == 'plan' }
             }
             steps {
                 dir("${TF_WORKING_DIR}") {
-                    sh """
-                        terraform plan -out=tfplan \
-                        -var="application=${params.APPLICATION}" \
-                        -var="environment=${params.ENVIRONMENT}" \
-                        -var="instance_count=${params.INSTANCE_COUNT}"
-                    """
+                    script {
+                        def instanceCount = params.INSTANCE_COUNT?.trim() ?: '1' // Default to 1 if empty
+                        sh """
+                            terraform plan -out=tfplan \
+                            -var="application=${params.APPLICATION}" \
+                            -var="environment=${params.ENVIRONMENT}" \
+                            -var="instance_count=${instanceCount}"
+                        """
+                    }
                 }
             }
         }
+
 
         stage('Terraform Plan && Apply') {
             when {
