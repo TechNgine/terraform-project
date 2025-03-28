@@ -35,3 +35,13 @@ variable "instance_name" {
   description = "Unique name for each instance"
   type        = string
 }
+variable "application" {
+  description = "The application name"
+  type        = string
+}
+
+variable "environment" {
+  description = "The environment (e.g., dev, prod)"
+  type        = string
+}
+
