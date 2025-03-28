@@ -41,6 +41,10 @@ resource "aws_security_group" "new-terraform-sg1" {
   }
 }
 
+# Local variable to store instance count letters
+locals {
+  count_letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]
+}
 
 #Create Multiple EC2 Instances
 resource "aws_instance" "terraform-ec2" {
