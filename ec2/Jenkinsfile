@@ -22,6 +22,16 @@ pipeline {
             }
         }
 
+        stage ('Slack Notification for Terraform init') {
+            when {
+                expression { params.TERRAFORM_ACTION == 'init' }
+            }
+          steps {
+            echo "terraform init command has successfully ran"
+            slackSend(channel:'devop-spring', message: "Job is successful, here is the info - Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+          }
+        }
+
         stage('Terraform Plan') {
             when {
                 expression { params.TERRAFORM_ACTION == 'plan' || params.TERRAFORM_ACTION == 'apply' }
@@ -56,6 +66,16 @@ pipeline {
                     }
                 }
             }
+        }
+
+        stage ('Slack Notification for Terraform Apply') {
+            when {
+                expression { params.TERRAFORM_ACTION == 'apply' }
+            }
+          steps {
+            echo "terraform apply command has successfully ran. ${params.INSTANCE_COUNT} number of Instances have been provisioned "
+            slackSend(channel:'devop-spring', message: "Job is successful, here is the info - Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+          }
         }
 
         stage('Terraform Destroy') {
