@@ -106,5 +106,9 @@ pipeline {
         always {
             echo 'Terraform process completed!'
         }
+            always {
+            // Clean up workspace
+            cleanWs()
+        }
     }
 }
