@@ -32,17 +32,18 @@ pipeline {
           }
         }
 
-        stage('Terraform Plan') {
+        stage('Terraform Destroy') {
             when {
-                expression { params.TERRAFORM_ACTION == 'plan' || params.TERRAFORM_ACTION == 'apply' }
+                expression { params.TERRAFORM_ACTION == 'destroy' }
             }
             steps {
                 dir("${TF_WORKING_DIR}") {
                     sh """
-                        terraform plan -out=tfplan \
+                        terraform destroy -auto-approve \
                         -var="application=${params.APPLICATION}" \
                         -var="environment=${params.ENVIRONMENT}" \
-                        -var="instance_count=${params.INSTANCE_COUNT}"
+                        -var="instance_count=${params.INSTANCE_COUNT}" \
+                        -var="security_group=aws-${params.ENVIRONMENT}-${params.APPLICATION}-sg"
                     """
                 }
             }
