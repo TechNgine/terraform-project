@@ -15,6 +15,9 @@ pipeline {
 
     stages {
         stage('Terraform Init') {
+            when {
+                expression { params.TERRAFORM_ACTION == 'init' }
+            }
             steps {
                 dir("${TF_WORKING_DIR}") {
                     sh 'terraform init'
@@ -34,7 +37,7 @@ pipeline {
 
         stage('Terraform Plan') {
             when {
-                expression { params.TERRAFORM_ACTION == 'plan' || params.TERRAFORM_ACTION == 'apply' }
+                expression { params.TERRAFORM_ACTION == 'plan' }
             }
             steps {
                 dir("${TF_WORKING_DIR}") {
