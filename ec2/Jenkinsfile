@@ -42,7 +42,8 @@ pipeline {
                         terraform plan -out=tfplan \
                         -var="application=${params.APPLICATION}" \
                         -var="environment=${params.ENVIRONMENT}" \
-                        -var="instance_count=${params.INSTANCE_COUNT}"
+                        -var="instance_count=${params.INSTANCE_COUNT}" \
+                        -var="security_group=aws-${params.ENVIRONMENT}-${params.APPLICATION}-sg"
 
                     """
                 }
