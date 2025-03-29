@@ -15,6 +15,7 @@ variable "instance_type" {
 
 variable "security_group" { 
     description = "Name of security group" 
+    type        = string
 }
 
 variable "ami_id" { 
