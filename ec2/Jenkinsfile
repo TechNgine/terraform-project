@@ -74,7 +74,7 @@ pipeline {
             }
           steps {
             echo "terraform apply command has successfully ran. ${params.INSTANCE_COUNT} number of Instances have been provisioned "
-            slackSend(channel:'devop-spring', message: "Job is successful, here is the info - Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+            slackSend(channel:'devop-spring', message: "Job is successful, ${params.INSTANCE_COUNT} number of Instances have been provisioned here is the info - Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
           }
         }
 
