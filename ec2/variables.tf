@@ -15,7 +15,7 @@ variable "instance_type" {
 
 variable "security_group" { 
     description = "Name of security group" 
-    default     = "new-terraform-sg" 
+    default     = "${APPLICATION}" 
 }
 
 variable "ami_id" { 
