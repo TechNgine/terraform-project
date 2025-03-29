@@ -13,9 +13,9 @@ resource "aws_vpc" "main" {
 
 #Create security group with firewall rules
 resource "aws_security_group" "new-terraform-sg" {
-  name        = "aws-${var.environment}-${var.application}-$-sg{count.index < 10"
-  description = "security group for jenkins"
-                                        
+  name        = "aws-${var.environment}-${var.application}-sg"
+  description = "Security group for Jenkins"
+  
   ingress {
     from_port   = 8080
     to_port     = 8080
@@ -23,14 +23,13 @@ resource "aws_security_group" "new-terraform-sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
- ingress {
+  ingress {
     from_port   = 3389
     to_port     = 3389
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
- # outbound from Jenkins server
   egress {
     from_port   = 0
     to_port     = 65535
@@ -38,10 +37,11 @@ resource "aws_security_group" "new-terraform-sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags= {
-    Name = var.security_group
+  tags = {
+    Name = "aws-${var.environment}-${var.application}-sg"
   }
 }
+
 
 # Local variable to store instance count letters
 locals {
