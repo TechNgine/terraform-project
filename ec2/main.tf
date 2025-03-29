@@ -13,7 +13,7 @@ resource "aws_vpc" "main" {
 
 #Create security group with firewall rules
 resource "aws_security_group" "new-terraform-sg" {
-  name        = var.security_group
+  name        = aws-${var.environment}-${var.application}-$-sg{count.index < 10
   description = "security group for jenkins"
                                         
   ingress {
